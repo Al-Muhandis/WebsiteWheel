@@ -18,6 +18,7 @@ type
   protected
     procedure Parse;override;
   public
+    procedure DoAcceptFiles; virtual; abstract;
     property ItemID: Int64 read FItemID write FItemID;
     procedure Get; override;
   end;
@@ -73,6 +74,8 @@ begin
   if Fields.Count>0 then
   begin
     GetFields(Item);
+    if Files.Count>0 then
+      DoAcceptFiles;
     try
       if AnItem=EmptyStr then
       begin

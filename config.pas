@@ -136,6 +136,7 @@ type
     Femail: TEmailConfig;
     FTelegram: TTelegramConf;
     FTemplatesDirectory: String;
+    FUploadDirectory: String;
     function GetTemplatesDirectory: String;
   public
     constructor Create;
@@ -149,6 +150,7 @@ type
     property Telegram: TTelegramConf read FTelegram write FTelegram;
     property App: TAppConf read FApp write FApp;
     property TemplatesDirectory: String read GetTemplatesDirectory write FTemplatesDirectory;
+    property UploadDirectory: String read FUploadDirectory write FUploadDirectory;
   end;
 
 var

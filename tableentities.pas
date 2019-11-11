@@ -114,7 +114,7 @@ type
   private
     Fcon: TdSQLdbConnector;
   protected
-    function GetOPF({%H-}aAlias: String): IOPFInterface; virtual;
+    function GetOPF(const aAlias: String): IOPFInterface; virtual; abstract;
   public
     constructor Create(const aDriver, aDBName: String; const aUser: String = '';
       const aPassword: String = ''; const aHost: String = ''; aLogFileName: String = '';
@@ -174,23 +174,6 @@ begin
   end;
   Result+='</select>';
 end;
-{
-function HTMLFieldIDLookup(const aFieldName: String; aFieldValue: Integer; aList: array of string
-  ): String;
-var
-  i: Integer;
-begin
-  Result:='<select name="'+aFieldName+'">';
-  for i:=0 to Length(aList)-1 do
-  begin
-    Result+='<option value="'+i.ToString+'"';
-    if aFieldValue=i then
-      Result+=' selected';
-    Result+='>'+aList[i]+'</option>';
-  end;
-  Result+='</select>';
-end;
-}
 
 function ExtractBetweenKeys(const ASource, Key1, Key2: String;
   var APos: Integer; out ADest: String): Boolean;
@@ -396,15 +379,7 @@ begin
   else
     Result:=nil;
 end;
-{
-function TDataManagement.GetHTMLSelect(const aEntityField: String; aEntityAlias: String;
-  aFieldValue: Int64): String;
-begin
-  if aEntityAlias=EmptyStr then
-    aEntityAlias:=aEntityField;
-  Result:=HTMLFieldIDLookup(aEntityField, OPF[aEntityAlias].GetEntityList, aFieldValue);
-end;
-}
+
 function TDataManagement.GetTemplateItem(const Row: String; AnItem: TDBEntity; aSelectedID: Int64;
   aSelectedAttr: String): String;
 var
@@ -462,11 +437,6 @@ begin
   finally
     aQuery.Free;
   end;
-end;
-
-function TDataManagement.GetOPF(aAlias: String): IOPFInterface;
-begin
-  Result:=nil;
 end;
 
 constructor TDataManagement.Create(const aDriver, aDBName: String;
