@@ -22,7 +22,8 @@ type
     function GetTemplateFileName: String;
   protected
     procedure Parse; virtual;
-    procedure ParseQTemplate; virtual; abstract;
+    procedure ParseJTemplate({%H-}aJTemplate: TJTemplate); virtual;
+    procedure BeforeParseQTemplate({%H-}aQTemplate: TQTemplate); virtual;
     function RemoteAddress: String;
     property BaseTemplateName: String read FBaseTemplateName write FBaseTemplateName;
     property JTemplate: TJTemplate read FJTemplate;
@@ -104,12 +105,23 @@ procedure TBaseAction.Parse;
 begin
   JTemplate.Fields.Add('title', Title);
   JTemplate.Fields.Add('description', Description);
+  BeforeParseQTemplate(QTemplate);
   if FQTemplate.HasContent then
     JTemplate.Parser.Content:=QTemplate.GetContent
   else
     JTemplate.LoadFromFile(TemplateFileName);
-  JTemplate.Parser.Replace(True);
+  ParseJTemplate(JTemplate);
   Write(JTemplate.Parser.Content);
+end;
+
+procedure TBaseAction.ParseJTemplate(aJTemplate: TJTemplate);
+begin
+  JTemplate.Parser.Replace(True);
+end;
+
+procedure TBaseAction.BeforeParseQTemplate(aQTemplate: TQTemplate);
+begin 
+  // do nothing
 end;
 
 function TBaseAction.RemoteAddress: String;

@@ -25,6 +25,7 @@ type
     function QTemplateMod(const {%H-}ATag: String; {%H-}AParams: TStringList): String;
     function QTemplateList(const {%H-}ATag: String; AParams: TStringList): String;
   protected
+    procedure AfterParse; virtual;
     function CreateORM: TDataManagement; virtual; abstract;
     function GetItemTemplate(const Row: String; AnItem: TDBEntity): String;
     function GetItemListContent(Header, Row, Footer: String; ACollection: TCollectionConf): String;
@@ -192,6 +193,11 @@ begin
     StrToInt64Def(AParams.Values['sel_id'], -1), AParams.Values['sel_attr']);
 end;
 
+procedure TAdminAction.AfterParse;
+begin
+
+end;
+
 destructor TAdminAction.Destroy;
 begin
   FSession.Free;
@@ -244,7 +250,6 @@ begin
   end;
   Session.Start(ARequest);
   P:=ARequest.PathInfo;
-  //AppLogger.Debug('CP1: '+P);
   LoginUrl:='/'+Conf.Admin.UriAlias+'/'+a_Login+'/';
   if Session.Exists('name') then
   begin

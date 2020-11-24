@@ -5,7 +5,7 @@ unit actionentity;
 interface
 
 uses
-  Classes, SysUtils, actionadmin, fpjson
+  Classes, SysUtils, actionadmin, fpjson, tableentities
   ;
 
 type
@@ -16,6 +16,7 @@ type
   private
     FItemID: Int64;
   protected
+    procedure AssignFieldsToEntity(aEntity: TDBEntity); virtual;
     procedure Parse;override;
   public
     procedure DoAcceptFiles; virtual; abstract;
@@ -41,10 +42,15 @@ type
 implementation
 
 uses
-  BrookUtils, config, tableentities
+  BrookUtils, config
   ;
 
 { TGetItemAction }
+
+procedure TGetItemAction.AssignFieldsToEntity(aEntity: TDBEntity);
+begin
+  GetFields(aEntity);
+end;
 
 procedure TGetItemAction.Parse;
 var
@@ -58,6 +64,12 @@ begin
   Item:=nil;
   FItemID:=StrToInt64Def(AnItem, 0);
   aOPF:=ORM.OPF[PathAlias];
+  if not Assigned(aOPF) then
+  begin
+    HttpResponse.Code:=404;
+    HttpResponse.CodeText:='Entity not found';
+    Exit;
+  end;
   Item:=aOPF.GetEntityByID(FItemID, aFound);
   if not aFound and not AnItem.IsEmpty then
   begin
@@ -73,7 +85,7 @@ begin
   end;
   if Fields.Count>0 then
   begin
-    GetFields(Item);
+    AssignFieldsToEntity(Item);
     if Files.Count>0 then
       DoAcceptFiles;
     try
@@ -104,7 +116,7 @@ begin
     aAlert:=EmptyStr;
   end;
   JTemplate.AddFields(Item, 'item');
-  JTemplate.SetValues(Params, 'item');
+  //JTemplate.SetValues(Params, 'item');  // Временно. Проверить!!!
   JTemplate.Parser.Fields.Add('alert', aAlert);
   JTemplate.Parser.Fields.Add('alerttype', aAlertType);
   JTemplate.Parser.Fields.Add('entity', aOPF.GetEntityCaption);

@@ -10,7 +10,7 @@ uses
 
 type
 
-  EWDMConfig = class(Exception);
+  EWSWConfig = class(Exception);
 
   { TAdminConf }
 
@@ -302,39 +302,6 @@ begin
   FreeAndNil(FAdmin);
   inherited Destroy;
 end;
-{
-procedure TConf.LoadFromFile;
-var
-  AnIni: TMemIniFile;
-begin
-  AnIni:=TMemIniFile.Create(CnfgFileName);
-
-  Telegram.Token:=     AnIni.ReadString('Telegram', 'Token', EmptyStr);
-  Telegram.Admin:=     AnIni.ReadInt64('Telegram', 'Admin', 0);
-  Telegram.User:=      AnIni.ReadInt64('Telegram', 'User', 0);
-
-  FTemplatesDirectory:=AnIni.ReadString('Templates', 'Directory', TmltDir);
-
-  Admin.UriAlias:=AnIni.ReadString('Admin', 'Alias', 'admin');
-  Admin.Host:= AnIni.ReadString('Admin', 'Host', EmptyStr);
-  Admin.Template:= AnIni.ReadString('Admin', 'Template', EmptyStr);
-  Admin.RemoteAddress:= AnIni.ReadString('Admin', 'RemoteAddress', EmptyStr);
-  AnIni.Free;
-end;
-
-procedure TConf.Reload;
-begin
-  LoadFromFile;
-end;
-
-procedure TConf.SaveToFile;
-var
-  AnIni: TMemIniFile;
-begin
-  AnIni:=TMemIniFile.Create(CnfgFileName);
-  AnIni.UpdateFile;
-  AnIni.Free;
-end;}
 
 function TConf.GetAdminTemplateDir: String;
 begin

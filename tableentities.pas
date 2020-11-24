@@ -80,7 +80,7 @@ type
 
   { TdGDBEntityOpf }
 
-  generic TdGDBEntityOpf<T> = class(specialize TdGSQLdbEntityOpf<T>, IOPFInterface)
+  generic TdGDBEntityOpf<T: TDBEntity> = class(specialize TdGSQLdbEntityOpf<T>, IOPFInterface)
   private
     FEntities: TEntities;
     FEntitiesCaption: String;
@@ -93,12 +93,12 @@ type
   public
     procedure AddEntity;
     procedure ApplyEntity;
-    constructor Create(AConnection: T1; const ATableName: string); reintroduce; override;
+    constructor Create(AConnection: TdSQLdbConnector; const ATableName: string); reintroduce; override;
     constructor Create(AORM: TDataManagement; const ATableName: string; const aEntities, aEntity: String);
     procedure RemoveEntity;
     destructor Destroy; override;
     function GetEntity: TDBEntity;
-    function GetEntityByID(aID: Int64; out aFound: Boolean): TDBEntity;
+    function GetEntityByID(aID: Int64; out aFound: Boolean): TDBEntity; virtual;
     function GetEntityByID(aID: Int64): TDBEntity;
     function GetEntityList: TFPSList;
     procedure ListEntity(const aFilter: String = '');
@@ -136,8 +136,6 @@ const
   TgPfxJ='${-';
   TgSfxJ='-}';
 
-function HTMLFieldIDLookup(const aFieldName: String; aList: TFPSList; aFieldValue: Int64 = -1): String;
-
 implementation
 
 uses
@@ -156,23 +154,6 @@ begin
     Result:= aQuote+LeftStr(aNameValue, i-1)+aQuote+'='+RightStr(aNameValue, Length(aNameValue)-i)
   else
     Result:=aQuote+aNameValue+aQuote;
-end;
-
-function HTMLFieldIDLookup(const aFieldName: String; aList: TFPSList; aFieldValue: Int64 = -1): String;
-var
-  aListItem: TDBEntity;
-  i: Integer;
-begin
-  Result:='<select name="'+aFieldName+'" class="form-control">';
-  for i:=0 to aList.Count-1 do
-  begin
-    aListItem:=TDBEntity(aList.Items[i]^);
-    Result+='<option value="'+aListItem.id.ToString+'"';
-    if aFieldValue=aListItem.id then
-      Result+=' selected';
-    Result+='>'+aListItem.Caption+'</option>';
-  end;
-  Result+='</select>';
 end;
 
 function ExtractBetweenKeys(const ASource, Key1, Key2: String;
@@ -279,7 +260,8 @@ begin
   Apply;
 end;
 
-constructor TdGDBEntityOpf.Create(AConnection: T1; const ATableName: string);
+constructor TdGDBEntityOpf.Create(AConnection: TdSQLdbConnector;
+  const ATableName: string);
 begin
   inherited Create(AConnection, ATableName);
   Table.IgnoredFields.CommaText:=T.GetIgnoredFields;
