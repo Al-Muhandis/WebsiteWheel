@@ -139,7 +139,7 @@ const
 implementation
 
 uses
-  config, JTemplate, strutils
+  JTemplate, strutils
   ;
 
 var
